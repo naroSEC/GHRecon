@@ -1,0 +1,5 @@
+services:
+  app:
+    image: example/app:latest
+    environment:
+      API_PATH: /api/v1/items

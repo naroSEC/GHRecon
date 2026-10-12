@@ -1,0 +1,2 @@
+service:
+  url: https://staging.example.invalid/api/v1

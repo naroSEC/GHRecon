@@ -1,0 +1,22 @@
+# Copy selected values into a GHRecon --config file and customize them.
+interesting_files:
+  - .env
+  - application.yml
+  - application.properties
+  - docker-compose.yml
+  - tfvars
+  - serverless.yml
+  - kubeconfig
+  - values.yaml
+  - package.json
+  - pom.xml
+  - build.gradle
+
+secret_candidate_files:
+  - .env
+  - credentials
+  - kubeconfig
+  - id_rsa
+  - service-account.json
+
+custom_queries: []

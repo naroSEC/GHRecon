@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ghrecon.example/schema/v1/finding.json",
+  "title": "GHRecon Finding v1",
+  "type": "object",
+  "required": ["schema_version", "type", "value", "confidence", "sources"],
+  "properties": {
+    "schema_version": {"const": "1"},
+    "type": {"enum": ["repository", "organization", "user", "domain", "subdomain", "url", "endpoint", "cloud_asset", "secret_candidate"]},
+    "value": {"type": "string", "minLength": 1},
+    "provider": {"type": "string"},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "reason": {"type": "string"},
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source"],
+        "properties": {
+          "source": {"type": "string"},
+          "repository": {"type": "string"},
+          "path": {"type": "string"},
+          "url": {"type": "string", "format": "uri"},
+          "query": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "repository_details": {
+      "type": "object",
+      "required": ["full_name", "owner", "html_url", "visibility", "archived", "fork", "stars"],
+      "additionalProperties": true
+    },
+    "attributes": {"type": "object"}
+  },
+  "additionalProperties": true
+}

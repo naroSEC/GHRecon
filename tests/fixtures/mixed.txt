@@ -1,0 +1,6 @@
+API_BASE=https://api.example.com/v1/users?active=true
+DEBUG_PATH=/admin/debug
+AWS_HOST=assets.s3.us-east-1.amazonaws.com
+AZURE_HOST=examplestore.blob.core.windows.net
+GCP_SERVICE=example-service.run.app
+terraform_backend="https://storage.googleapis.com/example-public-assets"

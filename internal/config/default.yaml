@@ -1,0 +1,37 @@
+github:
+  api_url: https://api.github.com
+  api_version: "2022-11-28"
+search:
+  profile: standard
+  max_depth: 1
+  max_queries: 50
+  max_results: 100
+  concurrency: 4
+  timeout: 20s
+  include_forks: false
+  include_archived: false
+extractors:
+  domains: true
+  urls: true
+  endpoints: true
+  cloud: true
+  email: false
+interesting_files:
+  - .env
+  - application.yml
+  - application.properties
+  - docker-compose.yml
+  - tfvars
+  - serverless.yml
+  - kubeconfig
+  - values.yaml
+  - package.json
+  - pom.xml
+  - build.gradle
+secret_candidate_files:
+  - .env
+  - credentials
+  - kubeconfig
+  - id_rsa
+  - service-account.json
+custom_queries: []
