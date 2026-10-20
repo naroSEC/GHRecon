@@ -33,11 +33,11 @@ func (s *stringList) String() string     { return strings.Join(*s, ",") }
 func (s *stringList) Set(v string) error { *s = append(*s, v); return nil }
 
 type options struct {
-	target                                                                             model.Target
-	input, configPath, outputPath, profile, token, tokenFile                           string
-	json, jsonl, reposOnly, includeForks, includeArchived, verbose, quiet, showVersion bool
-	maxResults, maxQueries, maxDepth, concurrency                                      int
-	timeout                                                                            time.Duration
+	target                                                                                          model.Target
+	input, configPath, outputPath, profile, token, tokenFile                                        string
+	json, jsonl, reposOnly, showSources, includeForks, includeArchived, verbose, quiet, showVersion bool
+	maxResults, maxQueries, maxDepth, concurrency                                                   int
+	timeout                                                                                         time.Duration
 }
 
 func main() { os.Exit(run(os.Args[1:], os.Stdout, os.Stderr)) }
@@ -221,7 +221,7 @@ func run(args []string, stdout, stderr io.Writer) int {
 		defer file.Close()
 		writer = file
 	}
-	if err := output.Write(writer, format, report); err != nil {
+	if err := output.WriteWithOptions(writer, format, report, output.Options{ShowSources: opts.showSources}); err != nil {
 		fmt.Fprintf(stderr, "ghrecon: write output: %v\n", err)
 		return 1
 	}
@@ -262,6 +262,7 @@ func parseFlags(args []string, stderr io.Writer) (options, error) {
 	fs.BoolVar(&o.jsonl, "jsonl", false, "write one finding per JSON line")
 	fs.StringVar(&o.outputPath, "output", "", "write output to file")
 	fs.BoolVar(&o.reposOnly, "repos-only", false, "emit repository candidates only")
+	fs.BoolVar(&o.showSources, "show-sources", false, "show repository, path, URL, and query provenance in text output")
 	fs.IntVar(&o.maxResults, "max-results", 0, "maximum API results per query")
 	fs.IntVar(&o.maxQueries, "max-queries", 0, "maximum queries")
 	fs.IntVar(&o.maxDepth, "max-depth", -1, "maximum deep expansion depth")

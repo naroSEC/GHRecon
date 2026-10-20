@@ -96,6 +96,12 @@ Search by domain:
 ghrecon --domain example.com
 ```
 
+Show the repository, file path, URL, and query behind each finding:
+
+```sh
+ghrecon --domain example.com --show-sources
+```
+
 Combine several identifiers:
 
 ```sh
@@ -177,7 +183,7 @@ The default interesting-file and candidate rules are available in [rules/default
 
 ## Output
 
-Human-readable output is the default. Use `--json` for a complete report envelope or `--jsonl` for one deduplicated finding per line.
+Human-readable output is the default. Add `--show-sources` to expand the provenance below each finding. Use `--json` for a complete report envelope or `--jsonl` for one deduplicated finding per line.
 
 Machine-readable output is written only to stdout. Progress and verbose logs are written to stderr, so piping JSONL does not require log filtering.
 

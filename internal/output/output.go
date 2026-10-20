@@ -13,6 +13,10 @@ import (
 
 type Format string
 
+type Options struct {
+	ShowSources bool
+}
+
 const (
 	Text  Format = "text"
 	JSON  Format = "json"
@@ -20,6 +24,10 @@ const (
 )
 
 func Write(w io.Writer, format Format, report model.Report) error {
+	return WriteWithOptions(w, format, report, Options{})
+}
+
+func WriteWithOptions(w io.Writer, format Format, report model.Report, options Options) error {
 	switch format {
 	case JSON:
 		encoder := json.NewEncoder(w)
@@ -37,13 +45,13 @@ func Write(w io.Writer, format Format, report model.Report) error {
 		}
 		return bw.Flush()
 	case Text:
-		return writeText(w, report)
+		return writeText(w, report, options)
 	default:
 		return fmt.Errorf("unsupported output format %q", format)
 	}
 }
 
-func writeText(w io.Writer, report model.Report) error {
+func writeText(w io.Writer, report model.Report, options Options) error {
 	if _, err := fmt.Fprintf(w, "GHRecon %s\n\n", report.Status); err != nil {
 		return err
 	}
@@ -57,6 +65,9 @@ func writeText(w io.Writer, report model.Report) error {
 			last = f.Type
 		}
 		fmt.Fprintf(w, "%-60s %.2f  (%d sources)\n", f.Value, f.Confidence, len(f.Sources))
+		if options.ShowSources {
+			writeSources(w, f.Sources)
+		}
 	}
 	keys := make([]string, 0, len(report.Summary.Counts))
 	for k := range report.Summary.Counts {
@@ -72,4 +83,23 @@ func writeText(w io.Writer, report model.Report) error {
 		fmt.Fprintf(w, "\nPartial completion: %d queries failed.\n", len(report.Errors))
 	}
 	return nil
+}
+
+func writeSources(w io.Writer, sources []model.Provenance) {
+	for i, source := range sources {
+		fmt.Fprintf(w, "    source %d\n", i+1)
+		writeSourceField(w, "type", source.Source)
+		writeSourceField(w, "repository", source.Repository)
+		writeSourceField(w, "path", source.Path)
+		writeSourceField(w, "url", source.URL)
+		writeSourceField(w, "query", source.Query)
+	}
+}
+
+func writeSourceField(w io.Writer, label, value string) {
+	if value == "" {
+		return
+	}
+	value = strings.NewReplacer("\r", " ", "\n", " ").Replace(value)
+	fmt.Fprintf(w, "      %-10s %s\n", label, value)
 }

@@ -56,3 +56,14 @@ func TestRunJSONLEndToEndWithMockGitHub(t *testing.T) {
 		t.Fatalf("machine output emitted diagnostics: %s", stderr.String())
 	}
 }
+
+func TestParseShowSources(t *testing.T) {
+	var stderr bytes.Buffer
+	opts, err := parseFlags([]string{"--show-sources", "--domain", "example.com"}, &stderr)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !opts.showSources {
+		t.Fatal("--show-sources was not enabled")
+	}
+}
