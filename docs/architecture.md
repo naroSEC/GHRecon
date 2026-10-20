@@ -28,7 +28,7 @@ Queries are capped before execution. Every query owns its pagination and result 
 
 ## Security and data minimization
 
-Tokens are read from the environment and are never accepted as flags, serialized, cached, or logged. GHRecon stores only text-match fragments returned by GitHub long enough to extract assets. Default output records minimal evidence; candidate credential files produce only a reason and path, never a suspected value.
+Tokens may be supplied explicitly, read from a local token file, or inherited from `GITHUB_TOKEN`. They are held in memory only and are never serialized, cached, or logged. GHRecon stores only text-match fragments returned by GitHub long enough to extract assets. Default output records minimal evidence; candidate credential files produce only a reason and path, never a suspected value.
 
 ## ADR-001: aggregate provenance in each event
 

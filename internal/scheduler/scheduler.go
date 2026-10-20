@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	gh "github.com/ghrecon/ghrecon/internal/github"
-	"github.com/ghrecon/ghrecon/internal/query"
+	gh "github.com/naroSEC/GHRecon/internal/github"
+	"github.com/naroSEC/GHRecon/internal/query"
 )
 
 type Result struct {

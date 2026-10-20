@@ -21,15 +21,22 @@ GHRecon is intentionally focused on discovery. It does not clone repositories, v
 
 ## Installation
 
-Build from source with Go 1.23 or newer:
+Install the latest version with Go 1.23 or newer:
 
 ```sh
-git clone https://github.com/naroSEC/GHRecon.git
-cd GHRecon
-go build -o ghrecon ./cmd/ghrecon
+go install github.com/naroSEC/GHRecon/cmd/ghrecon@latest
 ```
 
-Release binaries are built for:
+The executable is installed in `$(go env GOPATH)/bin`. Make sure that directory is included in `PATH`.
+
+PowerShell for the current session:
+
+```powershell
+$env:Path += ";$(go env GOPATH)\bin"
+ghrecon --version
+```
+
+Prebuilt binaries are also available on the [Releases page](https://github.com/naroSEC/GHRecon/releases) for:
 
 - Linux amd64 and arm64
 - Windows amd64
@@ -37,7 +44,35 @@ Release binaries are built for:
 
 ## Authentication
 
-GHRecon reads the GitHub token from the environment. Tokens are not accepted as command-line arguments and are never written to logs or output files.
+GHRecon accepts a GitHub token from a file, a command-line option, or the `GITHUB_TOKEN` environment variable. Token values are never written to logs or result files.
+
+The recommended approach is a token file containing only the token and an optional trailing newline. Keep this file outside the repository and restrict access to your user account.
+
+```text
+github_pat_...
+```
+
+```sh
+ghrecon --token-file /secure/path/github.token --domain example.com
+```
+
+PowerShell:
+
+```powershell
+ghrecon `
+  --token-file "$env:USERPROFILE\.ghrecon\github.token" `
+  --domain example.com
+```
+
+For short-lived manual use, a token can be supplied directly:
+
+```sh
+ghrecon --token "github_pat_..." --domain example.com
+```
+
+`--token` can expose the token through shell history or the operating system's process list. Prefer `--token-file` on shared systems and in automation.
+
+The environment variable remains supported for compatibility:
 
 ```sh
 export GITHUB_TOKEN=github_pat_...
@@ -50,6 +85,8 @@ $env:GITHUB_TOKEN = "github_pat_..."
 ```
 
 Use the least privilege necessary. Public repository and code discovery does not require write access.
+
+Token source precedence is `--token` or `--token-file`, followed by `GITHUB_TOKEN`. The two command-line token options cannot be used together.
 
 ## Usage
 

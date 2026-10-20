@@ -3,3 +3,4 @@
 *.exe
 *.jsonl
 .env
+*.token

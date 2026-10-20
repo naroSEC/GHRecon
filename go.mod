@@ -1,4 +1,4 @@
-module github.com/ghrecon/ghrecon
+module github.com/naroSEC/GHRecon
 
 go 1.23
 

@@ -10,7 +10,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/ghrecon/ghrecon/internal/model"
+	"github.com/naroSEC/GHRecon/internal/model"
 )
 
 var domainRE = regexp.MustCompile("(?i)^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,63}$")

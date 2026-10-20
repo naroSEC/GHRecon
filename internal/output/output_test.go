@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/ghrecon/ghrecon/internal/model"
+	"github.com/naroSEC/GHRecon/internal/model"
 )
 
 func TestJSONSchema(t *testing.T) {

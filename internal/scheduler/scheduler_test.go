@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	gh "github.com/ghrecon/ghrecon/internal/github"
-	"github.com/ghrecon/ghrecon/internal/query"
+	gh "github.com/naroSEC/GHRecon/internal/github"
+	"github.com/naroSEC/GHRecon/internal/query"
 )
 
 func TestRunBoundsConcurrency(t *testing.T) {

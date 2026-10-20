@@ -3,8 +3,8 @@ package query
 import (
 	"testing"
 
-	"github.com/ghrecon/ghrecon/internal/config"
-	"github.com/ghrecon/ghrecon/internal/model"
+	"github.com/naroSEC/GHRecon/internal/config"
+	"github.com/naroSEC/GHRecon/internal/model"
 )
 
 func TestPlanDeterministicAndBounded(t *testing.T) {

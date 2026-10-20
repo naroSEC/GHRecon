@@ -5,7 +5,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/ghrecon/ghrecon/internal/model"
+	"github.com/naroSEC/GHRecon/internal/model"
 )
 
 type Store struct {

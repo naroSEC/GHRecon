@@ -8,8 +8,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/ghrecon/ghrecon/internal/config"
-	"github.com/ghrecon/ghrecon/internal/model"
+	"github.com/naroSEC/GHRecon/internal/config"
+	"github.com/naroSEC/GHRecon/internal/model"
 )
 
 var (

@@ -9,19 +9,20 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
+	"runtime/debug"
 	"strings"
 	"syscall"
 	"time"
 
-	"github.com/ghrecon/ghrecon/internal/config"
-	"github.com/ghrecon/ghrecon/internal/correlation"
-	"github.com/ghrecon/ghrecon/internal/extractor"
-	gh "github.com/ghrecon/ghrecon/internal/github"
-	"github.com/ghrecon/ghrecon/internal/model"
-	"github.com/ghrecon/ghrecon/internal/output"
-	"github.com/ghrecon/ghrecon/internal/query"
-	"github.com/ghrecon/ghrecon/internal/scheduler"
-	"github.com/ghrecon/ghrecon/internal/target"
+	"github.com/naroSEC/GHRecon/internal/config"
+	"github.com/naroSEC/GHRecon/internal/correlation"
+	"github.com/naroSEC/GHRecon/internal/extractor"
+	gh "github.com/naroSEC/GHRecon/internal/github"
+	"github.com/naroSEC/GHRecon/internal/model"
+	"github.com/naroSEC/GHRecon/internal/output"
+	"github.com/naroSEC/GHRecon/internal/query"
+	"github.com/naroSEC/GHRecon/internal/scheduler"
+	"github.com/naroSEC/GHRecon/internal/target"
 )
 
 var version = "dev"
@@ -33,7 +34,7 @@ func (s *stringList) Set(v string) error { *s = append(*s, v); return nil }
 
 type options struct {
 	target                                                                             model.Target
-	input, configPath, outputPath, profile                                             string
+	input, configPath, outputPath, profile, token, tokenFile                           string
 	json, jsonl, reposOnly, includeForks, includeArchived, verbose, quiet, showVersion bool
 	maxResults, maxQueries, maxDepth, concurrency                                      int
 	timeout                                                                            time.Duration
@@ -50,7 +51,7 @@ func run(args []string, stdout, stderr io.Writer) int {
 		return 1
 	}
 	if opts.showVersion {
-		fmt.Fprintln(stdout, version)
+		fmt.Fprintln(stdout, buildVersion())
 		return 0
 	}
 	cfg, err := config.Load(opts.configPath)
@@ -86,8 +87,13 @@ func run(args []string, stdout, stderr io.Writer) int {
 		return 1
 	}
 
+	token, err := resolveToken(opts.token, opts.tokenFile)
+	if err != nil {
+		fmt.Fprintf(stderr, "ghrecon: authentication: %v\n", err)
+		return 1
+	}
 	auth := gh.AuthProvider(gh.NoAuth{})
-	if token := os.Getenv("GITHUB_TOKEN"); token != "" {
+	if token != "" {
 		auth = gh.TokenAuth{Token: token}
 	}
 	client := gh.NewClient(cfg.GitHub.APIURL, cfg.GitHub.APIVersion, cfg.Search.Timeout, auth)
@@ -225,6 +231,19 @@ func run(args []string, stdout, stderr io.Writer) int {
 	return 0
 }
 
+func buildVersion() string {
+	if version != "dev" {
+		if strings.HasPrefix(version, "v") {
+			return version
+		}
+		return "v" + version
+	}
+	if info, ok := debug.ReadBuildInfo(); ok && info.Main.Version != "" && info.Main.Version != "(devel)" {
+		return info.Main.Version
+	}
+	return version
+}
+
 func parseFlags(args []string, stderr io.Writer) (options, error) {
 	var o options
 	fs := flag.NewFlagSet("ghrecon", flag.ContinueOnError)
@@ -236,6 +255,8 @@ func parseFlags(args []string, stderr io.Writer) (options, error) {
 	fs.Var((*stringList)(&o.target.Repositories), "repo", "known owner/repository (repeatable)")
 	fs.StringVar(&o.input, "input", "", "target file")
 	fs.StringVar(&o.configPath, "config", "", "YAML configuration file")
+	fs.StringVar(&o.tokenFile, "token-file", "", "file containing a GitHub token")
+	fs.StringVar(&o.token, "token", "", "GitHub token (may be visible in process lists and shell history)")
 	fs.StringVar(&o.profile, "profile", "", "quick, standard, or deep")
 	fs.BoolVar(&o.json, "json", false, "write a JSON report")
 	fs.BoolVar(&o.jsonl, "jsonl", false, "write one finding per JSON line")

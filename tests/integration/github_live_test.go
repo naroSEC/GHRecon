@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	gh "github.com/ghrecon/ghrecon/internal/github"
+	gh "github.com/naroSEC/GHRecon/internal/github"
 )
 
 func TestGitHubRepositorySearchLive(t *testing.T) {

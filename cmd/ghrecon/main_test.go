@@ -13,6 +13,9 @@ import (
 
 func TestRunJSONLEndToEndWithMockGitHub(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("Authorization") != "Bearer github_pat_mock" {
+			t.Errorf("request did not use token-file authentication")
+		}
 		w.Header().Set("X-RateLimit-Limit", "30")
 		w.Header().Set("X-RateLimit-Remaining", "29")
 		switch r.URL.Path {
@@ -26,13 +29,18 @@ func TestRunJSONLEndToEndWithMockGitHub(t *testing.T) {
 	}))
 	defer server.Close()
 
-	configPath := filepath.Join(t.TempDir(), "config.yaml")
+	tempDir := t.TempDir()
+	configPath := filepath.Join(tempDir, "config.yaml")
 	configBody := []byte("github:\n  api_url: " + server.URL + "\nsearch:\n  profile: quick\n  max_queries: 2\n  max_results: 1\n  concurrency: 1\n")
 	if err := os.WriteFile(configPath, configBody, 0o600); err != nil {
 		t.Fatal(err)
 	}
+	tokenPath := filepath.Join(tempDir, "github.token")
+	if err := os.WriteFile(tokenPath, []byte("github_pat_mock\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
 	var stdout, stderr bytes.Buffer
-	code := run([]string{"--config", configPath, "--domain", "example.com", "--jsonl"}, &stdout, &stderr)
+	code := run([]string{"--config", configPath, "--token-file", tokenPath, "--domain", "example.com", "--jsonl"}, &stdout, &stderr)
 	if code != 0 {
 		t.Fatalf("exit=%d stderr=%s", code, stderr.String())
 	}

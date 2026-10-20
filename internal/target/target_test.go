@@ -3,7 +3,7 @@ package target
 import (
 	"testing"
 
-	"github.com/ghrecon/ghrecon/internal/model"
+	"github.com/naroSEC/GHRecon/internal/model"
 )
 
 func TestNormalize(t *testing.T) {
